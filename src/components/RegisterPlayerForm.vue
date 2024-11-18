@@ -11,6 +11,9 @@
         v-model="nome"
         type="text"
         class="mt-1 px-4 py-2 block w-full rounded-md bg-gray-200"
+        placeholder="Rony, o Rústico"
+        minlength="5"
+        required
       />
     </div>
     <div>
@@ -24,8 +27,12 @@
         name="posicao"
         id="posicao"
         class="mt-1 px-4 py-2 block w-full rounded-md bg-gray-200"
+        required
       >
-        <option value="GOL" selected="true">GOL</option>
+        <option value="" disabled selected>
+          Qual a posição do jogador? 🏳️‍🌈🫵
+        </option>
+        <option value="GOL">GOL</option>
         <option value="ZAG">ZAG</option>
         <option value="LD">LD</option>
         <option value="LE">LE</option>
@@ -53,6 +60,8 @@
         v-model="idade"
         type="number"
         class="mt-1 px-4 py-2 block w-full rounded-md bg-gray-200"
+        placeholder="29"
+        required
       />
     </div>
     <button
@@ -72,14 +81,41 @@ export default defineComponent({
   setup() {
     const nome = ref('');
     const idade = ref('');
-    const posicao = ref('GOL');
+    const posicao = ref('');
 
-    const handleSubmit = () => {
-      console.log('Player Registered:', {
-        nome: nome.value,
-        idade: idade.value,
-        posicao: posicao.value,
-      });
+    const handleSubmit = async () => {
+      const formData = {
+        name: nome.value,
+        age: idade.value,
+        positiposicao: posicao.value,
+      };
+
+      try {
+        const response = await fetch(
+          'https://fut-api-441c9ac2d267.herokuapp.com/api/jogadores',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Player Registered Successfully:', result);
+          console.log(result);
+          nome.value = '';
+          idade.value = '';
+          posicao.value = '';
+        } else {
+          const error = await response.json();
+          console.error('Error Registering Player:', error);
+        }
+      } catch (error) {
+        console.error('Request Failed:', error);
+      }
     };
 
     return {
