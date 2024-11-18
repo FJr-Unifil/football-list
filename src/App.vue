@@ -39,9 +39,9 @@ export default defineComponent({
       'register'
     );
     const screens = [
-      { id: 'register', name: 'Registrar', icon: PlusCircle },
-      { id: 'list', name: 'Times e Jogadores', icon: Users },
-      { id: 'statistics', name: 'Estatísticas', icon: ChartArea },
+      { id: 'register', name: 'REGISTRAR', icon: PlusCircle },
+      { id: 'list', name: 'TIMES E JOGADORES', icon: Users },
+      { id: 'statistics', name: 'ESTATÍSTICAS', icon: ChartArea },
     ];
 
     const currentComponent = computed(() => {
