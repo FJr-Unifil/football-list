@@ -1,70 +1,69 @@
 <template>
-  <div class="max-w-2xl mx-auto p-4">
-    <div class="flex space-x-4 mb-4">
-      <InputComponent v-model="name" placeholder="Team Name" />
-      <InputComponent v-model="shortName" placeholder="Short Name" />
-      <InputComponent
-        v-model="favoritePlayer"
-        placeholder="Favorite Player"
-      />
-      <ButtonComponent
-        colorClass="bg-blue-500 text-white"
-        @click="addTeam"
-        >Add Team</ButtonComponent
-      >
+  <div class="min-h-screen bg-gray-50 p-4">
+    <div class="max-w-6xl mx-auto space-y-6">
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <NavigationBar
+          :screens="screens"
+          :currentScreen="currentScreen"
+          @update:currentScreen="updateCurrentScreen"
+        />
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm">
+        <MainContent :currentComponent="currentComponent" />
+      </div>
     </div>
-    <TableComponent :teams="teams" @remove="removeTeam" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import InputComponent from './components/Input.vue';
-import ButtonComponent from './components/Button.vue';
-import TableComponent from './components/Table.vue';
-
-interface Team {
-  name: string;
-  shortName: string;
-  favoritePlayer: string;
-}
+import { defineComponent, ref, computed } from 'vue';
+import { PlusCircle, Users, Home, ChartArea } from 'lucide-vue-next';
+import NavigationBar from './components/NavigationBar.vue';
+import MainContent from './components/MainContent.vue';
+import RegisterScreen from './components/RegisterScreen.vue';
+import ListScreen from './components/ListScreen.vue';
+import StatisticsScreen from './components/StatisticScreen.vue';
 
 export default defineComponent({
+  name: 'App',
   components: {
-    InputComponent,
-    ButtonComponent,
-    TableComponent,
+    NavigationBar,
+    MainContent,
+    PlusCircle,
+    Users,
+    Home,
   },
   setup() {
-    const name = ref<string>('');
-    const shortName = ref<string>('');
-    const favoritePlayer = ref<string>('');
-    const teams = ref<Team[]>([]);
+    const currentScreen = ref<'register' | 'list' | 'statistics'>(
+      'register'
+    );
+    const screens = [
+      { id: 'register', name: 'Registrar', icon: PlusCircle },
+      { id: 'list', name: 'Times e Jogadores', icon: Users },
+      { id: 'statistics', name: 'Estatísticas', icon: ChartArea },
+    ];
 
-    const addTeam = () => {
-      if (name.value && shortName.value && favoritePlayer.value) {
-        teams.value.push({
-          name: name.value,
-          shortName: shortName.value,
-          favoritePlayer: favoritePlayer.value,
-        });
-        name.value = '';
-        shortName.value = '';
-        favoritePlayer.value = '';
-      }
-    };
+    const currentComponent = computed(() => {
+      const components = {
+        register: RegisterScreen,
+        list: ListScreen,
+        statistics: StatisticsScreen,
+      };
+      return components[currentScreen.value];
+    });
 
-    const removeTeam = (index: number) => {
-      teams.value.splice(index, 1);
+    const updateCurrentScreen = (
+      screenId: 'register' | 'list' | 'statistics'
+    ) => {
+      currentScreen.value = screenId;
     };
 
     return {
-      name,
-      shortName,
-      favoritePlayer,
-      teams,
-      addTeam,
-      removeTeam,
+      currentScreen,
+      screens,
+      currentComponent,
+      updateCurrentScreen,
     };
   },
 });
