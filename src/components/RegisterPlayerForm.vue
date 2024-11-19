@@ -85,9 +85,9 @@ export default defineComponent({
 
     const handleSubmit = async () => {
       const formData = {
-        name: nome.value,
-        age: idade.value,
-        positiposicao: posicao.value,
+        nome: nome.value,
+        idade: idade.value,
+        posicao: posicao.value,
       };
 
       try {
