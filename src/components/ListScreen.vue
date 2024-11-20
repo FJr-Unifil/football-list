@@ -87,5 +87,18 @@ export default defineComponent({
       playersWithoutTeam,
     };
   },
+  created() {
+    this.fetchData();  // Chama a função para buscar os dados ao criar o componente
+  },
+  methods: {
+    async fetchData() {
+      try {
+        const response = await axios.get('https://fut-api-441c9ac2d267.herokuapp.com/api/times');
+        this.teams = response.data;  // Armazenando os dados recebidos na variável teams
+      } catch (error) {
+        console.error('Erro ao fazer a requisição:', error);
+      }
+    },
+  },
 });
 </script>
