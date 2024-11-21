@@ -7,30 +7,39 @@
         :key="team.sigla"
         class="p-4 bg-white rounded-lg shadow-sm"
       >
-        <h3 class="text-xl font-medium flex items-center justify-between">
+        <h3 class="text-2xl font-medium flex items-center gap-4 mb-4">
           {{ team.nome }}
-          <div class="flex space-x-2">
+          <div class="flex gap-2">
             <button
               class="bg-blue-500 text-white px-2 py-1 rounded"
               @click="openAddPlayerPopup(team)"
             >
-              Adicionar Jogador
+              <LucidePlus class="text-white w-4 h-4" />
             </button>
             <button
               v-if="team.jogadores.length > 0"
               class="bg-red-500 text-white px-2 py-1 rounded"
               @click="openRemovePlayerPopup(team)"
             >
-              Remover Jogador
+              <LucideTrash class="text-white w-4 h-4" />
             </button>
           </div>
         </h3>
         <ul class="ml-4 list-disc">
-          <li v-if="team.jogadores.length === 0" class="text-gray-500">
-            No momento, o clube NÃO possui nenhum jogador cadastrado ❌
+          <li
+            v-if="team.jogadores.length === 0"
+            class="text-gray-500"
+          >
+            No momento, o clube NÃO possui nenhum jogador cadastrado
+            ❌
           </li>
-          <li v-else v-for="player in team.jogadores" :key="player.nome">
-            {{ player.nome }}
+          <li
+            v-else
+            v-for="player in team.jogadores"
+            :key="player.nome"
+          >
+            {{ player.nome }} - {{ player.idade }} anos -
+            {{ player.posicao }}
           </li>
         </ul>
       </li>
@@ -38,11 +47,19 @@
     <div class="p-4 bg-white rounded-lg shadow-sm mt-6">
       <h3 class="text-xl font-medium">Sem Clube 🚫</h3>
       <ul class="ml-4 list-disc">
-        <li v-if="playersWithoutTeam.length === 0" class="text-gray-500">
+        <li
+          v-if="playersWithoutTeam.length === 0"
+          class="text-gray-500"
+        >
           Não há jogadores sem clube no momento.
         </li>
-        <li v-else v-for="player in playersWithoutTeam" :key="player.nome">
-          {{ player.nome }}
+        <li
+          v-else
+          v-for="player in playersWithoutTeam"
+          :key="player.nome"
+        >
+          {{ player.nome }} - {{ player.idade }} anos -
+          {{ player.posicao }}
         </li>
       </ul>
     </div>
@@ -56,22 +73,37 @@
           Adicionar jogador ao {{ selectedTeam?.nome }}
         </h3>
         <div class="mb-4">
-          <label class="block font-medium mb-2">Selecione um jogador:</label>
-          <select v-model="selectedPlayer" class="w-full border rounded px-2 py-1">
+          <label class="block font-medium mb-2"
+            >Selecione um jogador:</label
+          >
+          <select
+            v-model="selectedPlayer"
+            class="w-full border rounded px-2 py-1"
+          >
+            <option value="" selected disabled>
+              Selecione o Jogador que Deseja Adicionar
+            </option>
             <option
               v-for="player in playersWithoutTeam"
               :key="player.nome"
               :value="player"
             >
-              {{ player.nome }} - {{ player.posicao }} - {{ player.idade }} anos
+              {{ player.nome }} - {{ player.posicao }} -
+              {{ player.idade }} anos
             </option>
           </select>
         </div>
         <div class="flex justify-end">
-          <button class="bg-gray-500 text-white px-3 py-1 rounded mr-2" @click="closePopup">
+          <button
+            class="bg-gray-500 text-white px-3 py-1 rounded mr-2"
+            @click="closePopup"
+          >
             Cancelar
           </button>
-          <button class="bg-green-500 text-white px-3 py-1 rounded" @click="addPlayerToTeam">
+          <button
+            class="bg-green-500 text-white px-3 py-1 rounded"
+            @click="addPlayerToTeam"
+          >
             Adicionar
           </button>
         </div>
@@ -87,8 +119,16 @@
           Remover jogador do {{ selectedTeam?.nome }}
         </h3>
         <div class="mb-4">
-          <label class="block font-medium mb-2">Selecione um jogador:</label>
-          <select v-model="selectedPlayer" class="w-full border rounded px-2 py-1">
+          <label class="block font-medium mb-2"
+            >Selecione um jogador:</label
+          >
+          <select
+            v-model="selectedPlayer"
+            class="w-full border rounded px-2 py-1"
+          >
+            <option value="" selected disabled>
+              Selecione o Jogador que Deseja Remover
+            </option>
             <option
               v-for="player in selectedTeam?.jogadores"
               :key="player.nome"
@@ -99,10 +139,16 @@
           </select>
         </div>
         <div class="flex justify-end">
-          <button class="bg-gray-500 text-white px-3 py-1 rounded mr-2" @click="closePopup">
+          <button
+            class="bg-gray-500 text-white px-3 py-1 rounded mr-2"
+            @click="closePopup"
+          >
             Cancelar
           </button>
-          <button class="bg-red-500 text-white px-3 py-1 rounded" @click="removePlayerFromTeam">
+          <button
+            class="bg-red-500 text-white px-3 py-1 rounded"
+            @click="removePlayerFromTeam"
+          >
             Remover
           </button>
         </div>
@@ -113,6 +159,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { LucidePlus, LucideTrash } from 'lucide-vue-next';
 
 interface Player {
   nome: string;
@@ -129,6 +176,10 @@ interface Team {
 
 export default defineComponent({
   name: 'ListScreen',
+  components: {
+    LucidePlus,
+    LucideTrash,
+  },
   setup() {
     const teams = ref<Team[]>([]);
     const playersWithoutTeam = ref<Player[]>([]);
@@ -182,17 +233,18 @@ export default defineComponent({
 
       try {
         const response = await fetch(
-          `https://fut-api-441c9ac2d267.herokuapp.com/api/times/${selectedPlayer.value.nome}/${selectedTeam.value.sigla}`,
-          { method: 'DELETE' }
+          `https://fut-api-441c9ac2d267.herokuapp.com/api/times/remove/${selectedTeam.value.sigla}/${selectedPlayer.value.nome}`,
+          { method: 'PUT' }
         );
 
         if (!response.ok) {
           throw new Error('Failed to remove player from team');
         }
 
-        selectedTeam.value.jogadores = selectedTeam.value.jogadores.filter(
-          (player) => player.nome !== selectedPlayer.value?.nome
-        );
+        selectedTeam.value.jogadores =
+          selectedTeam.value.jogadores.filter(
+            (player) => player.nome !== selectedPlayer.value?.nome
+          );
         playersWithoutTeam.value.push(selectedPlayer.value);
 
         closePopup();
@@ -203,13 +255,17 @@ export default defineComponent({
 
     const fetchTeamsAndPlayers = async () => {
       try {
-        const teamResponse = await fetch('https://fut-api-441c9ac2d267.herokuapp.com/api/times');
+        const teamResponse = await fetch(
+          'https://fut-api-441c9ac2d267.herokuapp.com/api/times'
+        );
         if (!teamResponse.ok) {
           throw new Error('Failed to fetch teams');
         }
         const teamData: Team[] = await teamResponse.json();
 
-        const playerResponse = await fetch('https://fut-api-441c9ac2d267.herokuapp.com/api/jogadores');
+        const playerResponse = await fetch(
+          'https://fut-api-441c9ac2d267.herokuapp.com/api/jogadores'
+        );
         if (!playerResponse.ok) {
           throw new Error('Failed to fetch players');
         }
@@ -217,10 +273,14 @@ export default defineComponent({
 
         teams.value = teamData.map((team) => ({
           ...team,
-          jogadores: playerData.filter((player) => player.time === team.sigla),
+          jogadores: playerData.filter(
+            (player) => player.time === team.sigla
+          ),
         }));
 
-        playersWithoutTeam.value = playerData.filter((player) => !player.time);
+        playersWithoutTeam.value = playerData.filter(
+          (player) => !player.time
+        );
       } catch (error) {
         console.error('Error fetching teams and players:', error);
       }
@@ -243,13 +303,23 @@ export default defineComponent({
     };
   },
   created() {
-    this.fetchData();  // Chama a função para buscar os dados ao criar o componente
+    this.fetchData();
   },
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get('https://fut-api-441c9ac2d267.herokuapp.com/api/times');
-        this.teams = response.data;  // Armazenando os dados recebidos na variável teams
+        const response = await fetch(
+          'https://fut-api-441c9ac2d267.herokuapp.com/api/times'
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `Erro na requisição: ${response.status} - ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+        this.teams = data;
       } catch (error) {
         console.error('Erro ao fazer a requisição:', error);
       }
