@@ -45,7 +45,7 @@
       </li>
     </ul>
     <div class="p-4 bg-white rounded-lg shadow-sm mt-6">
-      <h3 class="text-xl font-medium">Sem Clube 🚫</h3>
+      <h3 class="text-2xl font-medium mb-4">Sem Clube 🚫</h3>
       <ul class="ml-4 list-disc">
         <li
           v-if="playersWithoutTeam.length === 0"
