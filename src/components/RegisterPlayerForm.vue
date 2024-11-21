@@ -30,7 +30,7 @@
         required
       >
         <option value="" disabled selected>
-          Qual a posição do jogador? 🏳️‍🌈🫵
+          Qual a posição do jogador?
         </option>
         <option value="GOL">GOL</option>
         <option value="ZAG">ZAG</option>
