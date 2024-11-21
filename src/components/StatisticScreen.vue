@@ -4,20 +4,40 @@
 
     <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
       <h3 class="text-lg font-semibold mb-4">Clube</h3>
-      <p class="text-lg font-medium">Quantidade Total de Times: {{ totalTeams }}</p>
-      <p class="text-lg font-medium">Clube Mais Antigo: {{ clubOldest }}</p>
-      <p class="text-lg font-medium">Clube Mais Novo: {{ clubNewest }}</p>
-      <p class="text-lg font-medium">Clube Com Mais Jogadores: {{ clubMostPlayers }}</p>
-      <p class="text-lg font-medium">Clube Com Menos Jogadores: {{ clubFewestPlayers }}</p>
+      <p class="text-lg font-medium">
+        Quantidade Total de Times: {{ totalTeams }}
+      </p>
+      <p class="text-lg font-medium">
+        Clube Mais Antigo: {{ clubOldest }}
+      </p>
+      <p class="text-lg font-medium">
+        Clube Mais Novo: {{ clubNewest }}
+      </p>
+      <p class="text-lg font-medium">
+        Clube Com Mais Jogadores: {{ clubMostPlayers }}
+      </p>
+      <p class="text-lg font-medium">
+        Clube Com Menos Jogadores: {{ clubFewestPlayers }}
+      </p>
     </div>
 
     <div class="bg-white rounded-lg shadow-sm p-4">
       <h3 class="text-lg font-semibold mb-4">Jogador</h3>
-      <p class="text-lg font-medium">Quantidade Total de Jogadores: {{ totalPlayers }}</p>
-      <p class="text-lg font-medium">Jogador Mais Velho: {{ oldestPlayer }}</p>
-      <p class="text-lg font-medium">Jogador Mais Novo: {{ youngestPlayer }}</p>
-      <p class="text-lg font-medium">Quantidade Jogadores Sem Clube: {{ playersWithoutTeamCount }}</p>
-      <p class="text-lg font-medium">Posição Mais Adicionada: {{ mostCommonPosition }}</p>
+      <p class="text-lg font-medium">
+        Quantidade Total de Jogadores: {{ totalPlayers }}
+      </p>
+      <p class="text-lg font-medium">
+        Jogador Mais Velho: {{ oldestPlayer }}
+      </p>
+      <p class="text-lg font-medium">
+        Jogador Mais Novo: {{ youngestPlayer }}
+      </p>
+      <p class="text-lg font-medium">
+        Quantidade Jogadores Sem Clube: {{ playersWithoutTeamCount }}
+      </p>
+      <p class="text-lg font-medium">
+        Posição Mais Adicionada: {{ mostCommonPosition }}
+      </p>
     </div>
   </div>
 </template>
@@ -58,13 +78,17 @@ export default defineComponent({
 
     const fetchStatistics = async () => {
       try {
-        const teamResponse = await fetch('https://fut-api-441c9ac2d267.herokuapp.com/api/times');
+        const teamResponse = await fetch(
+          'https://fut-api-441c9ac2d267.herokuapp.com/api/times'
+        );
         if (!teamResponse.ok) {
           throw new Error('Failed to fetch teams');
         }
         const teamData: Team[] = await teamResponse.json();
 
-        const playerResponse = await fetch('https://fut-api-441c9ac2d267.herokuapp.com/api/jogadores');
+        const playerResponse = await fetch(
+          'https://fut-api-441c9ac2d267.herokuapp.com/api/jogadores'
+        );
         if (!playerResponse.ok) {
           throw new Error('Failed to fetch players');
         }
@@ -72,10 +96,14 @@ export default defineComponent({
 
         teams.value = teamData.map((team) => ({
           ...team,
-          jogadores: playerData.filter((player) => player.time === team.sigla),
+          jogadores: playerData.filter(
+            (player) => player.time === team.sigla
+          ),
         }));
 
-        playersWithoutTeam.value = playerData.filter((player) => !player.time);
+        playersWithoutTeam.value = playerData.filter(
+          (player) => !player.time
+        );
 
         totalTeams.value = teams.value.length;
         totalPlayers.value = playerData.length;
@@ -84,32 +112,40 @@ export default defineComponent({
           team.fundacao < oldest.fundacao ? team : oldest
         );
         clubOldest.value = teams.value
-          .filter(team => team.fundacao === oldest.fundacao)
-          .map(team => `${team.nome} (${team.fundacao})`)
+          .filter((team) => team.fundacao === oldest.fundacao)
+          .map((team) => `${team.nome} (${team.fundacao})`)
           .join(' | ');
 
         const newest = teams.value.reduce((newest, team) =>
           team.fundacao > newest.fundacao ? team : newest
         );
         clubNewest.value = teams.value
-          .filter(team => team.fundacao === newest.fundacao)
-          .map(team => `${team.nome} (${team.fundacao})`)
+          .filter((team) => team.fundacao === newest.fundacao)
+          .map((team) => `${team.nome} (${team.fundacao})`)
           .join(' | ');
 
         const mostPlayers = teams.value.reduce((most, team) =>
           team.jogadores.length > most.jogadores.length ? team : most
         );
         clubMostPlayers.value = teams.value
-          .filter(team => team.jogadores.length === mostPlayers.jogadores.length)
-          .map(team => `${team.nome} (${team.jogadores.length})`)
+          .filter(
+            (team) =>
+              team.jogadores.length === mostPlayers.jogadores.length
+          )
+          .map((team) => `${team.nome} (${team.jogadores.length})`)
           .join(' | ');
 
         const fewestPlayers = teams.value.reduce((fewest, team) =>
-          team.jogadores.length < fewest.jogadores.length ? team : fewest
+          team.jogadores.length < fewest.jogadores.length
+            ? team
+            : fewest
         );
         clubFewestPlayers.value = teams.value
-          .filter(team => team.jogadores.length === fewestPlayers.jogadores.length)
-          .map(team => `${team.nome} (${team.jogadores.length})`)
+          .filter(
+            (team) =>
+              team.jogadores.length === fewestPlayers.jogadores.length
+          )
+          .map((team) => `${team.nome} (${team.jogadores.length})`)
           .join(' | ');
 
         const oldestPlayerData = playerData.reduce((oldest, player) =>
@@ -117,22 +153,27 @@ export default defineComponent({
         );
         oldestPlayer.value = `${oldestPlayerData.nome} (${oldestPlayerData.idade} anos)`;
 
-        const youngestPlayerData = playerData.reduce((youngest, player) =>
-          player.idade < youngest.idade ? player : youngest
+        const youngestPlayerData = playerData.reduce(
+          (youngest, player) =>
+            player.idade < youngest.idade ? player : youngest
         );
         youngestPlayer.value = `${youngestPlayerData.nome} (${youngestPlayerData.idade} anos)`;
 
-        playersWithoutTeamCount.value = playersWithoutTeam.value.length;
+        playersWithoutTeamCount.value =
+          playersWithoutTeam.value.length;
 
         const positionCounts = playerData.reduce((counts, player) => {
           counts[player.posicao] = (counts[player.posicao] || 0) + 1;
           return counts;
         }, {} as { [key: string]: number });
-        const mostCommon = Object.entries(positionCounts).reduce((most, [position, count]) =>
-          count > most.count ? { position, count } : most
-        , { position: '', count: 0 });
-        mostCommonPosition.value = `${mostCommon.position} (${mostCommon.count})`;
 
+        const maxCount = Math.max(...Object.values(positionCounts));
+
+        const mostCommonPositions = Object.entries(positionCounts)
+          .filter(([_, count]) => count === maxCount)
+          .map(([position, count]) => `${position} (${count})`);
+
+        mostCommonPosition.value = mostCommonPositions.join(' | ');
       } catch (error) {
         console.error('Error fetching statistics:', error);
       }
@@ -153,4 +194,5 @@ export default defineComponent({
       mostCommonPosition,
     };
   },
-});</script>
+});
+</script>
